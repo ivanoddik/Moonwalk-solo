@@ -349,7 +349,7 @@ Challenge scaling:
 - Scaling focuses on pacing and tension, not punishing execution barriers
 
 Controlled risk bands:
-- Each distance zone increases pressure in small, readable steps
+- Pressure increases through longer route commitment and clearer return windows, not per-zone oxygen drain multipliers
 - No sudden multipliers or hidden spikes
 
 ### Economy and Resources
@@ -522,7 +522,7 @@ Technical constraints:
 | --- | --- | --- | --- | --- |
 | 1 | Expedition Movement & Navigation | Movement, camera, traversal readability, return-path clarity | None | 5-7 |
 | 2 | Capture & Delivery Loop | Capture interactions, carry state, delivery flow, payout trigger | 1 | 5-7 |
-| 3 | Oxygen Risk System | Oxygen drain, distance risk scaling, fail/recovery loop | 1, 2 | 4-6 |
+| 3 | Oxygen Risk System | Oxygen drain (flat configurable rate), travel-commitment risk, fail/recovery loop | 1, 2 | 4-6 |
 | 4 | Base Income Core | Delivery payout rules, passive base income, reward readability | 2, 3 | 4-6 |
 | 5 | Upgrade Economy | Upgrade catalog, pricing curves, stat scaling, anti-stall flow | 4 | 5-8 |
 | 6 | Rebirth Economy & Meta Reset | Rebirth gates, reset behavior, permanent multipliers, slot growth | 5 | 5-7 |

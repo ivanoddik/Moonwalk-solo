@@ -1,23 +1,47 @@
 local RunService = game:GetService("RunService")
 local Players = game:GetService("Players")
 
+local DEFAULT_BASE_DRAIN_RATE_PER_SECOND = 2
+local DEFAULT_DEPLETED_REASON = "oxygen_depleted"
+
 local OxygenService = {}
 OxygenService.__index = OxygenService
 
-function OxygenService.new(config, eventNames, updateRemote, baseAnchor)
+function OxygenService.new(config, eventNames, updateRemote, baseAnchor, onDepleted)
     local self = setmetatable({}, OxygenService)
     self._config = config
     self._eventNames = eventNames
     self._updateRemote = updateRemote
     self._baseAnchor = baseAnchor
+    self._onDepleted = onDepleted
+    local configuredDrainRate = tonumber(config.baseDrainRatePerSecond)
+    if configuredDrainRate == nil or configuredDrainRate <= 0 then
+        error("OxygenService requires baseDrainRatePerSecond > 0 in Oxygen config")
+    end
+    self._baseDrainRatePerSecond = configuredDrainRate
     self._safeZoneBoundaryBuffer = math.max(0, tonumber(config.safeZoneBoundaryBuffer) or 2)
     self._playerOxygen = {}
     self._playerState = {} -- "Base" or "Exploring"
+    self._playerFailedRun = {}
+    self._playerFailReason = {}
     self._connections = {}
     self._tickConnection = nil
     
     self._lastUpdateTime = {}
     return self
+end
+
+function OxygenService.shouldTriggerFailState(state, previousOxygen, nextOxygen, alreadyFailed)
+    return state == "Exploring" and not alreadyFailed and previousOxygen > 0 and nextOxygen <= 0
+end
+
+function OxygenService:_getFlatExploringDrainRatePerSecond()
+    -- Story 3.2 guardrail: exploring drain must remain flat and configurable, not depth-scaled.
+    return self._baseDrainRatePerSecond or DEFAULT_BASE_DRAIN_RATE_PER_SECOND
+end
+
+function OxygenService:_getDepletedFailReason()
+    return self._config.depletedFailReason or DEFAULT_DEPLETED_REASON
 end
 
 function OxygenService:start()
@@ -50,17 +74,26 @@ function OxygenService:stop()
     end
     self._playerOxygen = {}
     self._playerState = {}
+    self._playerFailedRun = {}
+    self._playerFailReason = {}
     self._lastUpdateTime = {}
 end
 
 function OxygenService:setPlayerState(player, state)
-    if state ~= "Base" and state ~= "Exploring" then return end
+    if state ~= "Base" and state ~= "Exploring" and state ~= "Depleted" then
+        return
+    end
     
     local oldState = self._playerState[player.UserId]
     self._playerState[player.UserId] = state
     
-    -- If returning to base, refill oxygen (optional for now, but good UX)
-    if state == "Base" and oldState == "Exploring" then
+    if state == "Base" then
+        self._playerFailedRun[player.UserId] = false
+        self._playerFailReason[player.UserId] = nil
+    end
+
+    -- If returning to base from an active/depleted run, refill oxygen.
+    if state == "Base" and (oldState == "Exploring" or oldState == "Depleted") then
         self:_refillOxygen(player)
     end
     
@@ -74,12 +107,16 @@ end
 
 function OxygenService:_onPlayerAdded(player)
     self._playerState[player.UserId] = "Base"
+    self._playerFailedRun[player.UserId] = false
+    self._playerFailReason[player.UserId] = nil
     self:_refillOxygen(player)
 end
 
 function OxygenService:_onPlayerRemoving(player)
     self._playerOxygen[player.UserId] = nil
     self._playerState[player.UserId] = nil
+    self._playerFailedRun[player.UserId] = nil
+    self._playerFailReason[player.UserId] = nil
     self._lastUpdateTime[player.UserId] = nil
 end
 
@@ -93,7 +130,7 @@ function OxygenService:_onTick(dt)
         local userId = player.UserId
         local character = player.Character
         local root = character and character:FindFirstChild("HumanoidRootPart")
-        
+
         if root and self._baseAnchor then
             local newState = "Exploring"
             
@@ -145,15 +182,22 @@ function OxygenService:_onTick(dt)
         local currentOx = self._playerOxygen[userId] or self._config.defaultMaxOxygen
 
         if currentOx > 0 then
-            local drainAmount = self._config.baseDrainRatePerSecond * dt
-            self._playerOxygen[userId] = math.max(0, currentOx - drainAmount)
-        else
-            -- Out of oxygen: Deal damage over time
-            local character = player.Character
-            local humanoid = character and character:FindFirstChild("Humanoid")
-            if humanoid and humanoid.Health > 0 then
-                local damageAmount = humanoid.MaxHealth * (self._config.damageRatePerSecond * dt)
-                humanoid:TakeDamage(damageAmount)
+            local nextOx = OxygenService.computeNextOxygen(
+                currentOx,
+                self:_getFlatExploringDrainRatePerSecond(),
+                dt
+            )
+            local alreadyFailed = self._playerFailedRun[userId] == true
+            local shouldFail = OxygenService.shouldTriggerFailState(
+                state,
+                currentOx,
+                nextOx,
+                alreadyFailed
+            )
+            self._playerOxygen[userId] = nextOx
+
+            if shouldFail then
+                self:_handleOxygenDepleted(player)
             end
         end
 
@@ -169,18 +213,68 @@ function OxygenService:_onTick(dt)
     end
 end
 
+function OxygenService:_handleOxygenDepleted(player)
+    local userId = player.UserId
+    if self._playerFailedRun[userId] then
+        return
+    end
+
+    local failReason = self:_getDepletedFailReason()
+    self._playerFailedRun[userId] = true
+    self._playerFailReason[userId] = failReason
+    self._playerState[userId] = "Depleted"
+
+    if self._config.clearCarryOnDepletion and self._onDepleted then
+        self._onDepleted(player, failReason)
+    end
+
+    if self._config.forceRespawnOnDepletion then
+        local character = player.Character
+        local humanoid = character and character:FindFirstChild("Humanoid")
+        if humanoid and humanoid.Health > 0 then
+            humanoid.Health = 0
+        end
+    end
+
+    self:_sendUpdate(player)
+end
+
+function OxygenService.computeNextOxygen(current, configuredFlatDrainRatePerSecond, dt)
+    if current <= 0 then
+        return 0
+    end
+
+    return math.max(0, current - (configuredFlatDrainRatePerSecond * dt))
+end
+
+function OxygenService.buildUpdatePayload(eventName, current, max, state, failedRun, failReason)
+    return {
+        eventName = eventName,
+        current = current,
+        max = max,
+        state = state,
+        failedRun = failedRun == true,
+        failReason = failReason,
+    }
+end
+
 function OxygenService:_sendUpdate(player)
     if not self._updateRemote then return end
     
     local ox = self._playerOxygen[player.UserId] or self._config.defaultMaxOxygen
     local maxOx = self._config.defaultMaxOxygen
     
-    self._updateRemote:FireClient(player, {
-        eventName = self._eventNames.OXYGEN_UPDATE,
-        current = ox,
-        max = maxOx,
-        state = self._playerState[player.UserId]
-    })
+    self._updateRemote:FireClient(
+        player,
+        OxygenService.buildUpdatePayload(
+            self._eventNames.OXYGEN_UPDATE,
+            ox,
+            maxOx,
+            self._playerState[player.UserId],
+            self._playerFailedRun[player.UserId],
+            self._playerFailReason[player.UserId]
+        )
+    )
 end
 
 return OxygenService

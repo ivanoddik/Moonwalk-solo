@@ -83,6 +83,10 @@ local oxygenService = OxygenService.new(
     OxygenConfig,
     EventNames,
     oxygenUpdateRemote,
-    safeZoneReference
+    safeZoneReference,
+    function(player, _failReason)
+        -- On oxygen fail, clear carried payload so failed runs cannot be delivered.
+        carryStateService:clear(player)
+    end
 )
 oxygenService:start()

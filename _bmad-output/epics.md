@@ -6,7 +6,7 @@
 | --- | --- | --- | --- | --- | --- |
 | 1 | Expedition Movement & Navigation | Movement, camera, traversal readability, return-path clarity | None | 5-7 | Complete (Engineering) |
 | 2 | Capture & Delivery Loop | Capture interactions, carry state, delivery flow, payout trigger | 1 | 5-7 | Not Started |
-| 3 | Oxygen Risk System | Oxygen drain, distance risk scaling, fail/recovery loop | 1, 2 | 4-6 | Not Started |
+| 3 | Oxygen Risk System | Oxygen drain (flat configurable rate), travel-commitment risk, fail/recovery loop | 1, 2 | 4-6 | Not Started |
 | 4 | Base Income Core | Delivery payout rules, passive base income, reward readability | 2, 3 | 4-6 | Not Started |
 | 5 | Upgrade Economy | Upgrade catalog, pricing curves, stat scaling, anti-stall flow | 4 | 5-8 | Not Started |
 | 6 | Rebirth Economy & Meta Reset | Rebirth gates, reset behavior, permanent multipliers, slot growth | 5 | 5-7 | Not Started |
@@ -117,7 +117,7 @@ Stable risk loop with clear failure and immediate retry.
 ### Stories
 
 - As a player, oxygen drains during expeditions so risk is always present.
-- As a player, deeper routes increase oxygen pressure in readable steps.
+- As a player, deeper routes increase oxygen pressure through longer travel commitment while oxygen drain rate stays flat.
 - As a player, oxygen depletion causes a clear fail state.
 - As a player, I respawn quickly at base so retry cadence stays fast.
 - As a player, oxygen urgency feedback is clear but not overwhelming.

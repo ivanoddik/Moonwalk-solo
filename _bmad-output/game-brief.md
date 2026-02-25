@@ -1,4 +1,4 @@
----
+1---
 stepsCompleted:
   - 1
   - 2
@@ -133,6 +133,8 @@ Pillar Priority (when pillars conflict):
 
 Core Loop:
 Players explore outward to capture higher-value Brainrots under oxygen pressure, return to base to secure rewards, convert captures into cash progression, buy upgrades to improve expedition efficiency, and rebirth to reset with permanent advantages for stronger future runs.
+
+Oxygen design rule for implementation planning: depletion uses one configurable flat rate while in exploration; deeper routes feel riskier because of longer travel commitment, not faster per-second oxygen drain.
 
 ### Player Experience Goals
 

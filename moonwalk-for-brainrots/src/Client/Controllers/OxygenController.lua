@@ -80,10 +80,23 @@ function OxygenController:_onUpdate(payload)
     local current = payload.current or 0
     local max = payload.max or 100
     local state = payload.state or "Unknown"
+    local failedRun = payload.failedRun == true
+    local failReason = payload.failReason
 
     self._label.Text = string.format("[%s] Oxygen: %d/%d", string.upper(state), math.floor(current), max)
+    if failedRun then
+        self._label.Text = string.format(
+            "[%s] Oxygen: %d/%d - RUN FAILED (%s)",
+            string.upper(state),
+            math.floor(current),
+            max,
+            string.upper(tostring(failReason or "unknown"))
+        )
+    end
     
-    if state == "Base" then
+    if failedRun then
+        self._label.TextColor3 = Color3.fromRGB(255, 0, 0)
+    elseif state == "Base" then
         self._label.TextColor3 = Color3.fromRGB(100, 255, 100) -- Green for safe zone
     elseif current <= 20 then
         self._label.TextColor3 = Color3.fromRGB(255, 50, 50) -- Red for low oxygen
