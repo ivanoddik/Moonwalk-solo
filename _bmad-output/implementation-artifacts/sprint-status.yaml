@@ -51,8 +51,8 @@ development_status:
   epic-2: done
   2-1-capture-a-brainrot: done
   2-2-carry-captured-brainrots: done
-  2-3-deliver-captured-brainrots: done
-  2-4-immediate-payout-feedback: done
+  2-3-display-captured-brainrots-on-pedestals: done
+  2-4-immediate-passive-generation-feedback: done
   2-5-robust-state: done
   epic-2-retrospective: optional
   
@@ -66,7 +66,7 @@ development_status:
   epic-3-retrospective: optional
   
   epic-4: backlog
-  4-1-payout-reflects-captured-rarity-mutation: backlog
+  4-1-passive-rate-reflects-captured-rarity-mutation: backlog
   4-2-placed-brainrots-generate-passive-income: backlog
   4-3-read-current-income-state-clearly: backlog
   4-4-base-income-remains-stable: backlog

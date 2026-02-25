@@ -5,9 +5,9 @@
 | # | Epic Name | Scope | Dependencies | Est. Stories | Status |
 | --- | --- | --- | --- | --- | --- |
 | 1 | Expedition Movement & Navigation | Movement, camera, traversal readability, return-path clarity | None | 5-7 | Complete (Engineering) |
-| 2 | Capture & Delivery Loop | Capture interactions, carry state, delivery flow, payout trigger | 1 | 5-7 | Not Started |
+| 2 | Capture & Display Loop | Capture interactions, carry state, pedestal placement flow, passive generation trigger | 1 | 5-7 | Not Started |
 | 3 | Oxygen Risk System | Oxygen drain (flat configurable rate), travel-commitment risk, fail/recovery loop | 1, 2 | 4-6 | Not Started |
-| 4 | Base Income Core | Delivery payout rules, passive base income, reward readability | 2, 3 | 4-6 | Not Started |
+| 4 | Base Income Core | Pedestal payout rules, button collection, passive base income, reward readability | 2, 3 | 4-6 | Not Started |
 | 5 | Upgrade Economy | Upgrade catalog, pricing curves, stat scaling, anti-stall flow | 4 | 5-8 | Not Started |
 | 6 | Rebirth Economy & Meta Reset | Rebirth gates, reset behavior, permanent multipliers, slot growth | 5 | 5-7 | Not Started |
 | 7A | Monetization Infrastructure | Robux store shell, entitlement persistence, purchase restore/rejoin reliability | 4, 5, 6 | 4-6 | Not Started |
@@ -53,19 +53,19 @@ Playable traversal loop prototype across core area.
 
 ---
 
-## Epic 2: Capture & Delivery Loop
+## Epic 2: Capture & Display Loop
 
 ### Goal
 
-Enable an end-to-end capture and return cycle that defines the main loop.
+Enable an end-to-end capture and display cycle that defines the foundational interaction loop.
 
 ### Scope
 
 **Includes:**
 - Brainrot interaction/capture behavior
 - Carry state and run payload handling
-- Base delivery interaction
-- Delivery payout trigger event
+- Base pedestal display interaction
+- Passive generation trigger event
 
 **Excludes:**
 - Oxygen failure/recovery system
@@ -77,15 +77,15 @@ Epic 1
 
 ### Deliverable
 
-Complete capture -> return -> deliver cycle functioning in runtime.
+Complete capture -> return -> display cycle functioning in runtime.
 
 ### Stories
 
 - As a player, I can capture a Brainrot using context action so collection is straightforward.
 - As a player, I can carry captured Brainrots through the run.
-- As a player, I can deliver captured Brainrots at base to resolve a run.
-- As a player, I receive immediate payout feedback on delivery.
-- As a designer, capture and delivery states are robust across reconnect/retry cases.
+- As a player, I can place captured Brainrots on empty base pedestals to resolve a run.
+- As a player, placing a Brainrot triggers its passive income generation indicator.
+- As a designer, capture and pedestal states are robust across reconnect/retry cases.
 
 ---
 
@@ -100,8 +100,8 @@ Create meaningful risk/reward tension through oxygen constraints.
 **Includes:**
 - Oxygen drain behavior tied to run state/distance
 - Risk scaling as player moves deeper
-- Oxygen depletion fail state
-- Failure recovery and quick restart flow
+- Oxygen depletion fail state (triggers gradual HP drain)
+- Failure recovery upon death and quick restart flow
 
 **Excludes:**
 - Full economy and progression balancing
@@ -118,8 +118,8 @@ Stable risk loop with clear failure and immediate retry.
 
 - As a player, oxygen drains during expeditions so risk is always present.
 - As a player, deeper routes increase oxygen pressure through longer travel commitment while oxygen drain rate stays flat.
-- As a player, oxygen depletion causes a clear fail state.
-- As a player, I respawn quickly at base so retry cadence stays fast.
+- As a player, oxygen depletion causes a clear fail state (gradual HP drain, not instant kill).
+- As a player, I respawn quickly at base after death so retry cadence stays fast.
 - As a player, oxygen urgency feedback is clear but not overwhelming.
 
 ---
@@ -133,7 +133,8 @@ Establish the baseline economy flow from captured value to usable income.
 ### Scope
 
 **Includes:**
-- Delivery payout rules
+- Pedestal passive generation rules
+- Floor button collection mechanics
 - Passive base income from placed Brainrots
 - Income readability and core economy feedback
 
@@ -150,8 +151,9 @@ Reliable earn loop with visible short-session rewards.
 
 ### Stories
 
-- As a player, payout reflects captured rarity/mutation value.
+- As a player, passive generation rate reflects captured rarity/mutation value.
 - As a player, placed Brainrots generate passive income over time.
+- As a player, I can step on pedestal buttons to collect the accumulated income.
 - As a player, I can read current income state clearly.
 - As a designer, base income remains stable under repeated run cycles.
 
