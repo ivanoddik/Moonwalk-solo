@@ -25,6 +25,7 @@ function OxygenService.new(config, eventNames, updateRemote, baseAnchor, onDeple
     self._playerFailedRun = {}
     self._playerFailReason = {}
     self._connections = {}
+    self._diedConnections = {}
     self._tickConnection = nil
     
     self._lastUpdateTime = {}
@@ -76,6 +77,7 @@ function OxygenService:stop()
     self._playerState = {}
     self._playerFailedRun = {}
     self._playerFailReason = {}
+    self._diedConnections = {}
     self._lastUpdateTime = {}
 end
 
@@ -110,13 +112,47 @@ function OxygenService:_onPlayerAdded(player)
     self._playerFailedRun[player.UserId] = false
     self._playerFailReason[player.UserId] = nil
     self:_refillOxygen(player)
+
+    local function onCharacterAdded(character)
+        -- Clean up previous connection if it exists
+        if self._diedConnections[player.UserId] then
+            self._diedConnections[player.UserId]:Disconnect()
+            self._diedConnections[player.UserId] = nil
+        end
+        
+        local humanoid = character:WaitForChild("Humanoid", 5)
+        if humanoid then
+            self._diedConnections[player.UserId] = humanoid.Died:Connect(function()
+                if self._config.forceRespawnOnDepletion then
+                    local delayTime = tonumber(self._config.respawnDelaySeconds) or 1.5
+                    task.delay(delayTime, function()
+                        if player and player.Parent then
+                            -- Instantly transition state so UI resets before character finishes loading
+                            self:setPlayerState(player, "Base")
+                            player:LoadCharacter()
+                        end
+                    end)
+                end
+            end)
+        end
+    end
+
+    if player.Character then
+        onCharacterAdded(player.Character)
+    end
+    self._connections[#self._connections + 1] = player.CharacterAdded:Connect(onCharacterAdded)
 end
 
 function OxygenService:_onPlayerRemoving(player)
     self._playerOxygen[player.UserId] = nil
     self._playerState[player.UserId] = nil
     self._playerFailedRun[player.UserId] = nil
+    self._playerFailedRun[player.UserId] = nil
     self._playerFailReason[player.UserId] = nil
+    if self._diedConnections[player.UserId] then
+        self._diedConnections[player.UserId]:Disconnect()
+        self._diedConnections[player.UserId] = nil
+    end
     self._lastUpdateTime[player.UserId] = nil
 end
 
@@ -134,13 +170,16 @@ function OxygenService:_onTick(dt)
         if root and self._baseAnchor then
             local newState = "Exploring"
             
-            local cf, size
-            if self._baseAnchor:IsA("Model") then
-                cf, size = self._baseAnchor:GetBoundingBox()
-            elseif self._baseAnchor:IsA("BasePart") then
-                cf, size = self._baseAnchor.CFrame, self._baseAnchor.Size
+            -- Cache the bounding box calculation per tick instead of per player
+            if not self._cachedAnchorPos and not self._cachedAnchorSize then
+                if self._baseAnchor:IsA("Model") then
+                    self._cachedAnchorPos, self._cachedAnchorSize = self._baseAnchor:GetBoundingBox()
+                elseif self._baseAnchor:IsA("BasePart") then
+                    self._cachedAnchorPos, self._cachedAnchorSize = self._baseAnchor.CFrame, self._baseAnchor.Size
+                end
             end
             
+            local cf, size = self._cachedAnchorPos, self._cachedAnchorSize
             if cf and size then
                 local localPos = cf:PointToObjectSpace(root.Position)
                 local halfSize = size / 2
@@ -152,9 +191,10 @@ function OxygenService:_onTick(dt)
                 if math.abs(localPos.X) <= (halfSize.X + buffer) and math.abs(localPos.Z) <= (halfSize.Z + buffer) then
                    newState = "Base"
                 end
-            else
-                -- Fallback to simple radius if it's somehow neither
-                local dist = (root.Position - self._baseAnchor.Position).Magnitude
+            elseif self._baseAnchor:IsA("BasePart") or self._baseAnchor:IsA("Model") then
+                -- Fallback to simple radius if CFrame isn't readily available
+                local pos = self._baseAnchor:IsA("Model") and self._baseAnchor:GetPivot().Position or self._baseAnchor.Position
+                local dist = (root.Position - pos).Magnitude
                 if dist <= self._config.safeZoneRadius then
                     newState = "Base"
                 end
@@ -171,8 +211,12 @@ function OxygenService:_onTick(dt)
         end
     end
 
+    -- Clear anchor cache for next tick to handle any potential anchor movement
+    self._cachedAnchorPos = nil
+    self._cachedAnchorSize = nil
+
     for userId, state in pairs(self._playerState) do
-        if state ~= "Exploring" then
+        if state ~= "Exploring" and state ~= "Depleted" then
             continue
         end
 
@@ -181,7 +225,7 @@ function OxygenService:_onTick(dt)
 
         local currentOx = self._playerOxygen[userId] or self._config.defaultMaxOxygen
 
-        if currentOx > 0 then
+        if currentOx > 0 and state == "Exploring" then
             local nextOx = OxygenService.computeNextOxygen(
                 currentOx,
                 self:_getFlatExploringDrainRatePerSecond(),
@@ -198,6 +242,13 @@ function OxygenService:_onTick(dt)
 
             if shouldFail then
                 self:_handleOxygenDepleted(player)
+            end
+        elseif currentOx <= 0 and state == "Depleted" then
+            local character = player.Character
+            local humanoid = character and character:FindFirstChild("Humanoid")
+            if humanoid and humanoid.Health > 0 then
+                local dmg = humanoid.MaxHealth * (self._config.damageRatePerSecond or 0.1) * dt
+                humanoid.Health = math.max(0, humanoid.Health - dmg)
             end
         end
 
@@ -226,14 +277,6 @@ function OxygenService:_handleOxygenDepleted(player)
 
     if self._config.clearCarryOnDepletion and self._onDepleted then
         self._onDepleted(player, failReason)
-    end
-
-    if self._config.forceRespawnOnDepletion then
-        local character = player.Character
-        local humanoid = character and character:FindFirstChild("Humanoid")
-        if humanoid and humanoid.Health > 0 then
-            humanoid.Health = 0
-        end
     end
 
     self:_sendUpdate(player)

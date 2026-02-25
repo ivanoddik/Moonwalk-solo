@@ -13,6 +13,7 @@ local InteractionAuthorityService = require(serverRoot.Services.Session.Interact
 local CarryStateService = require(serverRoot.Services.Session.CarryStateService)
 local CaptureDeliveryService = require(serverRoot.Services.Economy.CaptureDeliveryService)
 local WalletService = require(serverRoot.Services.Economy.WalletService)
+local EconomyService = require(serverRoot.Services.Economy.EconomyService)
 local OxygenService = require(serverRoot.Services.Oxygen.OxygenService)
 
 local remotesFolder = ReplicatedStorage:FindFirstChild("Remotes")
@@ -46,12 +47,15 @@ end
 local carryStateService = CarryStateService.new()
 carryStateService:start()
 local walletService = WalletService.new()
+local economyService = EconomyService.new()
+
 local captureDeliveryService = CaptureDeliveryService.new(
     CaptureDeliveryConfig,
     EventNames,
     feedbackRemote,
     carryStateService,
-    walletService
+    walletService,
+    economyService
 )
 
 local interactionAuthorityService = InteractionAuthorityService.new(

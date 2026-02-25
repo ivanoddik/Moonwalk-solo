@@ -41,6 +41,7 @@ _This file contains critical rules and patterns that AI agents must follow when 
 - Keep balance numbers in shared config modules; avoid hardcoded values inside runtime service logic.
 - Rebirth must execute as an atomic server transaction boundary (settle pending, reset fields, apply permanent multipliers, persist checkpoint).
 - Debug inspectors and dev cheats must be gated behind environment flags and never active by default in production.
+- Oxygen depletion must trigger a gradual HP drain leading to death. Do not instantly kill or instantly teleport the player when oxygen reaches zero.
 
 ### Performance Rules
 

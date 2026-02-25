@@ -3,13 +3,14 @@ local CollectionService = game:GetService("CollectionService")
 local CaptureDeliveryService = {}
 CaptureDeliveryService.__index = CaptureDeliveryService
 
-function CaptureDeliveryService.new(config, eventNames, feedbackRemote, carryStateService, walletService)
+function CaptureDeliveryService.new(config, eventNames, feedbackRemote, carryStateService, walletService, economyService)
     local self = setmetatable({}, CaptureDeliveryService)
     self._config = config
     self._eventNames = eventNames
     self._feedbackRemote = feedbackRemote
     self._carryStateService = carryStateService
     self._walletService = walletService
+    self._economyService = economyService
     return self
 end
 
@@ -71,7 +72,8 @@ function CaptureDeliveryService:_tryDeliver(player)
         return self:_result("reject", "NOT_CARRYING")
     end
 
-    local payoutPreview = math.floor(carried.baseValue * carried.rarityMultiplier * carried.mutationMultiplier)
+    local payoutPreview = self._economyService and self._economyService:calculateCanonicalPayout(player, carried)
+        or math.floor(carried.baseValue * carried.rarityMultiplier * carried.mutationMultiplier)
     local deliveredPayload = {
         brainrotId = carried.brainrotId,
         payoutPreview = payoutPreview,

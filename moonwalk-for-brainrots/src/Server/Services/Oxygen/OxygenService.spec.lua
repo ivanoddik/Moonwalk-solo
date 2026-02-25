@@ -75,6 +75,25 @@ local function run()
     service:_handleOxygenDepleted(fakePlayer)
     service:_handleOxygenDepleted(fakePlayer)
     assertEqual(depletedCalls, 1, "depletion handling must be idempotent per player")
+
+    local resetService = OxygenService.new({
+        defaultMaxOxygen = 100,
+        baseDrainRatePerSecond = 2,
+    }, { OXYGEN_UPDATE = "Oxygen/Update" }, {FireClient=function() end}, nil)
+
+    local fakePlayer2 = { UserId = 777 }
+    resetService._playerState[777] = "Depleted"
+    resetService._playerFailedRun[777] = true
+    resetService._playerFailReason[777] = "oxygen_depleted"
+    resetService._playerOxygen[777] = 0
+    
+    -- Simulate the reset that occurs after teleport delay
+    resetService:setPlayerState(fakePlayer2, "Base")
+    
+    assertEqual(resetService._playerState[777], "Base", "state should return to Base after reset")
+    assertEqual(resetService._playerFailedRun[777], false, "failed run flag should be cleared on Base transition")
+    assertEqual(resetService._playerFailReason[777] == nil, true, "fail reason should be cleared on Base transition")
+    assertEqual(resetService._playerOxygen[777], 100, "oxygen should be refilled on Base transition")
 end
 
 run()

@@ -48,11 +48,11 @@ development_status:
   1-5-receive-clear-movement-feedback: done
   epic-1-retrospective: optional
   
-  epic-2: done
+  epic-2: in-progress
   2-1-capture-a-brainrot: done
   2-2-carry-captured-brainrots: done
-  2-3-display-captured-brainrots-on-pedestals: done
-  2-4-immediate-passive-generation-feedback: done
+  2-3-display-captured-brainrots-on-pedestals: backlog
+  2-4-immediate-passive-generation-feedback: backlog
   2-5-robust-state: done
   epic-2-retrospective: optional
   
