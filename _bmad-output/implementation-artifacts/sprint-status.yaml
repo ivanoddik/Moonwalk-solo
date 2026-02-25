@@ -57,11 +57,12 @@ development_status:
   epic-2-retrospective: optional
   
   epic-3: in-progress
-  3-1-oxygen-drains-during-expeditions: done
-  3-2-deeper-routes-increase-pressure-through-commitment: done
-  3-3-oxygen-depletion-causes-fail-state: in-progress
-  3-4-respawn-quickly-at-base: backlog
-  3-5-oxygen-urgency-feedback-is-clear: backlog
+  3-1-oxygen-drains-during-expeditions:      # Sprint 3 - Core Game Loops (Active)
+      3-1-economy-base: done
+      3-2-oxygen-base: done
+      3-3-oxygen-depletion-causes-fail-state: done
+  3-4-respawn-quickly-at-base: done
+  3-5-oxygen-urgency-feedback-is-clear: done
   epic-3-retrospective: optional
   
   epic-4: backlog
