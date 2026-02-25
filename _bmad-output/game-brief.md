@@ -126,13 +126,13 @@ Pillar Priority (when pillars conflict):
 - Explore farther from base
 - Capture Brainrots
 - Return before oxygen runs out
-- Deliver Brainrot to base
-- Earn cash
+- Place Brainrot on Display Pedestal
+- Collect passive cash
 - Buy upgrades
 - Rebirth
 
 Core Loop:
-Players explore outward to capture higher-value Brainrots under oxygen pressure, return to base to secure rewards, convert captures into cash progression, buy upgrades to improve expedition efficiency, and rebirth to reset with permanent advantages for stronger future runs.
+Players explore outward to capture higher-value Brainrots under oxygen pressure, return to base to secure captures on display pedestals, collect passive cash progression from floor buttons, buy upgrades to improve expedition efficiency, and rebirth to reset with permanent advantages for stronger future runs.
 
 Oxygen design rule for implementation planning: depletion uses one configurable flat rate while in exploration; deeper routes feel riskier because of longer travel commitment, not faster per-second oxygen drain.
 
@@ -279,7 +279,7 @@ Reference baseline: Dive for Brainrots!.
 ### Audio Style
 
 Light background music at base that becomes tenser as players progress into riskier zones.
-SFX emphasis on collection feedback, rarity moments, and successful return relief.
+SFX emphasis on collection feedback, rarity moments, passive gold pickup, and successful return relief.
 No voice acting.
 
 ### Production Approach
@@ -323,10 +323,10 @@ Pipeline prioritizes speed, consistency, and maintainability for a 3-person full
 ### MVP Definition
 
 A playable vertical slice that includes:
-- Capturable and deliverable Brainrots
+- Capturable and displayable Brainrots
 - Rarity/material system for Brainrots
 - Modeled playable area
-- Base delivery loop with collect-revenue interactions
+- Base pedestal display loop with button collection interactions
 - Oxygen upgrade vendor
 - Rebirth system that increases stats and base size
 

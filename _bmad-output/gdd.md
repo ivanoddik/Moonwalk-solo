@@ -115,7 +115,7 @@ Secondary audience: older Roblox idle/tycoon optimization players and returning 
 ### Project Goals
 
 1. Ship a polished vertical slice
-   Deliver a complete and fun capture -> deliver -> upgrade -> rebirth gameplay loop that can stand as a minimum playable product.
+   Deliver a complete and fun capture -> display -> collect -> upgrade -> rebirth gameplay loop that can stand as a minimum playable product.
 
 2. Hit mobile-first technical quality
    Ensure stable low-end mobile performance and reliable multiplayer operation at the intended 4-8 player server scale.
@@ -225,20 +225,20 @@ Control Scheme (Roblox):
 
 Mobile (primary):
 - Left virtual joystick: movement
-- Context action button: interact/capture/deliver/trade
+- Context action button: interact/capture/display
 - Core HUD always visible: oxygen, distance, key progression indicators
 - No dedicated fixed gameplay menu button
 
 Keyboard/Mouse:
 - WASD: movement
-- E: interact/capture/deliver/trade (single-context verb)
+- E: interact/capture/display (single-context verb)
 - Mouse: camera + UI interaction
 - No dedicated fixed gameplay menu hotkey
 
 Gamepad:
 - Left stick: movement
 - Right stick: camera
-- Context action button (A equivalent): interact/capture/deliver/trade
+- Context action button (A equivalent): interact/capture/display
 - No dedicated fixed gameplay menu button
 
 Input Feel:
@@ -442,7 +442,7 @@ Music style:
 - Dynamic mood shift reinforces push-vs-return decisions
 
 Sound design:
-- Punchy, immediate feedback for capture, delivery, upgrade, and progression events
+- Punchy, immediate feedback for capture, pedestal placement, gold collection, upgrade, and progression events
 - Distinctive cues for rarity/mutation outcomes
 - Oxygen urgency cues designed to be readable and non-intrusive
 
@@ -496,7 +496,7 @@ Art assets:
 
 Audio assets:
 - Lightweight music and SFX pipeline aligned with fast loop cadence
-- Distinct feedback cues for capture, delivery, rarity/mutation moments, and oxygen urgency
+- Distinct feedback cues for capture, pedestal placement, gold collection, rarity/mutation moments, and oxygen urgency
 - No voice pipeline in current scope
 
 External assets:
@@ -521,9 +521,9 @@ Technical constraints:
 | # | Epic Name | Scope | Dependencies | Est. Stories |
 | --- | --- | --- | --- | --- |
 | 1 | Expedition Movement & Navigation | Movement, camera, traversal readability, return-path clarity | None | 5-7 |
-| 2 | Capture & Delivery Loop | Capture interactions, carry state, delivery flow, payout trigger | 1 | 5-7 |
+| 2 | Capture &- Base display loop with passive income collection | interactions, carry state, pedestal placement flow, passive generation trigger | 1 | 5-7 |
 | 3 | Oxygen Risk System | Oxygen drain (flat configurable rate), travel-commitment risk, fail/recovery loop | 1, 2 | 4-6 |
-| 4 | Base Income Core | Delivery payout rules, passive base income, reward readability | 2, 3 | 4-6 |
+| 4 | Base Income Core | Pedestal payout rules, button collection, passive base income, reward readability | 2, 3 | 4-6 |
 | 5 | Upgrade Economy | Upgrade catalog, pricing curves, stat scaling, anti-stall flow | 4 | 5-8 |
 | 6 | Rebirth Economy & Meta Reset | Rebirth gates, reset behavior, permanent multipliers, slot growth | 5 | 5-7 |
 | 7A | Monetization Infrastructure | Robux store shell, entitlement persistence, purchase restore/rejoin reliability | 4, 5, 6 | 4-6 |
@@ -541,7 +541,7 @@ Technical constraints:
 
 ### Vertical Slice
 
-The first playable milestone is a complete 1-3 minute loop where players move out from base, capture a common Brainrot, manage oxygen pressure, return to deliver, and receive visible progression feedback.
+The first playable milestone is a complete 1-3 minute loop where players move out from base, capture a common Brainrot, manage oxygen pressure, return to place it on a pedestal, collect passive income, and receive visible progression feedback.
 
 ### Go/No-Go Gates
 
