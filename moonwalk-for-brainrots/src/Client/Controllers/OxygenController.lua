@@ -153,15 +153,7 @@ function OxygenController:_onUpdate(payload)
     local threshold = payload.threshold or OxygenConfig.lowOxygenWarningThreshold
 
     self._label.Text = string.format("[%s] Oxygen: %d/%d", string.upper(state), math.floor(current), max)
-    if failedRun then
-        self._label.Text = string.format(
-            "[%s] Oxygen: %d/%d - RUN FAILED (%s)",
-            string.upper(state),
-            math.floor(current),
-            max,
-            string.upper(tostring(failReason or "unknown"))
-        )
-    end
+
     
     local shouldWarn = not failedRun and state ~= "Base" and current <= threshold
     self:_setWarningActive(shouldWarn)

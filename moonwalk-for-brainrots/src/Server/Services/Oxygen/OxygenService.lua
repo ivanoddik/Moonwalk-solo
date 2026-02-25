@@ -201,7 +201,12 @@ function OxygenService:_onTick(dt)
             end
             
             if self._playerState[userId] ~= newState then
-                self:setPlayerState(player, newState)
+                -- Do not overwrite Depleted with Exploring. (Once depleted, you must return to Base to clear it)
+                if self._playerState[userId] == "Depleted" and newState == "Exploring" then
+                    -- Keep Depleted state
+                else
+                    self:setPlayerState(player, newState)
+                end
             end
         elseif not root then
             -- If player is dead/respawning, force them to Base state so they don't drain oxygen in limbo
