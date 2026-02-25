@@ -42,7 +42,7 @@ game_name: 'Moonwalk for brainrots'
 
 ### Core Concept
 
-Moonwalk for brainrots is a Roblox simulation-driven collection tycoon where players launch short high-risk expeditions from a moon base to capture Brainrots of increasing rarity and value. Oxygen pressure creates moment-to-moment tension: go farther for better rewards, but risk losing the run if you fail to return in time. Captured Brainrots are delivered to base systems that generate income, which players reinvest into oxygen, transport capacity, progression upgrades, and rebirth growth.
+Moonwalk for brainrots is a Roblox simulation-driven collection tycoon where players launch short high-risk expeditions from a moon base to capture Brainrots of increasing rarity and value. Oxygen pressure creates moment-to-moment tension: go farther for better rewards, but risk losing the run if you fail to return in time. Captured Brainrots are brought back to the base and placed on display pedestals (starting with 8 slots) where they generate passive income over time. Players collect this passive income to reinvest into oxygen, transport capacity, progression upgrades, and rebirth growth.
 
 The game is designed for young players (6-16) with an easy-to-learn interface, fast progression cadence, and immediate reward clarity. Session structure supports both short weekday bursts and longer weekend chains, using repeatable loops that continuously escalate through rarity tiers, mutation variants, and rebirth multipliers.
 
@@ -158,10 +158,10 @@ Pillar Prioritization:
 
 ### Core Gameplay Loop
 
-Players repeatedly launch short expeditions from base, travel outward to capture Brainrots, manage oxygen constraints, and decide when to return. On successful return, they convert captures into revenue, invest in upgrades and capacity, and eventually rebirth for persistent multipliers that unlock higher-value future runs.
+Players repeatedly launch short expeditions from base, travel outward to capture Brainrots, manage oxygen constraints, and decide when to return. On successful return, they place their captured Brainrots on display pedestals at their base to build passive income. Income is generated passively by the displayed Brainrots and is collected over time by the player to invest in upgrades and capacity, and eventually rebirth for persistent multipliers that unlock higher-value future runs.
 
 Loop Diagram:
-Prepare at base -> Explore outward -> Capture Brainrots -> Monitor oxygen risk -> Return to base -> Deliver for revenue -> Buy upgrades/rebirth -> Repeat at higher risk/reward
+Prepare at base -> Explore outward -> Capture Brainrots -> Monitor oxygen risk -> Return to base -> Display on Pedestals -> Collect passive income -> Buy upgrades/rebirth -> Repeat at higher risk/reward
 
 Loop Timing:
 ~1-3 minutes per run, designed for chainable repeat sessions.
@@ -177,7 +177,7 @@ Victory conditions:
 - Session success state: Demonstrable growth in power, earning rate, and collectible value over repeated runs.
 
 Failure conditions:
-- Primary fail state: Oxygen depletion before safe return, resulting in run failure and loss of carried run value.
+- Primary fail state: Oxygen depletion before safe return. Depletion causes gradual HP drain until death, resulting in run failure and loss of carried run value.
 - Soft fail state: Conservative or inefficient runs that return low value and slow progression momentum.
 
 Failure recovery:
@@ -198,8 +198,8 @@ On failure, players respawn at base with account-level progression intact, then 
 3. Oxygen Management and Return Decision
    Oxygen is the run-pressure system; players continuously decide whether to push farther or return safely.
 
-4. Deliver for Payout
-   Returned Brainrots are delivered at base to secure run rewards and convert risk into progression value.
+4. Display for Passive Payout
+   Returned Brainrots are placed on display pedestals (initially 8 slots available at the base) where they passively generate income. Gold is collected by stepping on a button in front of each pedestal slot. Players can choose to manually sell Brainrots, but doing so returns extremely minimal gold compared to the long-term passive revenue they produce.
 
 5. Upgrade Investment
    Revenue is spent on oxygen, movement/efficiency, carrying capacity, and progression systems to improve future runs.
@@ -210,7 +210,7 @@ On failure, players respawn at base with account-level progression intact, then 
 Mechanic Interactions:
 - Exploration directly drives capture opportunities and oxygen pressure.
 - Oxygen system governs risk ceiling and decision tension for every run.
-- Delivery resolves risk and feeds the economy loop.
+- Placing Brainrots onto pedestals creates an active income loop where players must frequently collect their accrued gold to feed the economy loop.
 - Economy upgrades alter exploration efficiency and safe return thresholds.
 - Rebirth compounds long-term progression, changing risk/reward expectations at each phase.
 
@@ -264,7 +264,7 @@ Moonwalk for brainrots simulates expedition risk per loop. The simulation depth 
 What's being simulated:
 - Risk exposure as distance increases
 - Reward scaling based on rarity/mutation outcomes
-- Failure probability through oxygen depletion pressure
+- Failure probability through oxygen depletion pressure (depletion causes gradual HP drain until death)
 
 System interconnections:
 - Distance/risk -> higher rarity/mutation opportunities -> higher payout potential
@@ -278,15 +278,15 @@ The player primarily manages movement and oxygen level in real time, with a most
 Management systems:
 - Core manual decisions: route choice, push-vs-return timing, oxygen awareness
 - Strategic spend decisions: which upgrades to prioritize before rebirth
-- Automation component: base income generation is passive once captures are secured
+- Automation component: base income generation is passive once captures are secured on pedestals, but players must manually step on pedestal buttons to collect the accumulated gold.
 
 ### Building and Construction
 
 There is no freeform base building in the current design.
 
 Construction model:
-- Base growth is progression-driven, not placement-driven
-- Each rebirth grants +1 new Brainrot slot at base
+- Base growth is progression-driven, primarily expanding the starting 8 pedestal slots.
+- Each rebirth grants +1 new Brainrot slot at base.
 - No demolition/rebuild loop planned in this phase
 - Base expansion is systemic and milestone-based rather than creative construction
 
@@ -295,8 +295,8 @@ Construction model:
 Economy centers on captured Brainrots as the primary value source.
 
 Economic design:
-- Income source: captured Brainrots converted to value
-- Value scaling: rarity x mutation combinations increase payout
+- Income source: Passive generation from Brainrots resting on display pedestals (actively collected via button presses). While manual selling is possible, the upfront gold is deliberately poor compared to their passive yield.
+- Value scaling: Rarity x mutation combinations increase the passive payout rate of that specific Brainrot.
 - Main sink: upgrades required to improve expedition capacity and qualify for rebirth
 - Rebirth requirements: specific capture criteria + target max-oxygen threshold
 - Growth shape: exponential income and pricing curve (slow early, very steep late)
@@ -357,12 +357,12 @@ Controlled risk bands:
 Moonwalk for brainrots uses a progression-coupled economy designed to maintain constant momentum and avoid stagnation.
 
 Resources:
-- Primary currency: money earned from captured Brainrots
-- Value factors: Brainrot rarity and mutation combinations
+- Primary currency: money collected from passive generation pedestals
+- Value factors: Brainrot rarity and mutation combinations determine their passive yield
 - Progression gate resources: required capture criteria + oxygen thresholds for rebirth
 
 Economy flow:
-Capture Brainrots -> Deliver for money -> Buy oxygen progression/upgrades -> Reach stronger Brainrots -> Qualify for rebirth -> Reset run-state with permanent multipliers -> Repeat faster and deeper
+Capture Brainrots -> Return to base -> Place on Pedestal -> Collect passive gold -> Buy oxygen progression/upgrades -> Reach stronger Brainrots to display -> Qualify for rebirth -> Reset run-state with permanent multipliers -> Repeat faster and deeper
 
 Economy and progression tuning goals:
 - Players should not need to repeatedly farm the same area
