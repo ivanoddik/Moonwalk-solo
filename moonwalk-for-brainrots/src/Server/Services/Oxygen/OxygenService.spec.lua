@@ -2,14 +2,17 @@ local OxygenService = require(script.Parent:WaitForChild("OxygenService"))
 
 local function assertEqual(actual, expected, message)
     if actual ~= expected then
-        error(string.format("%s (expected %s, got %s)", message, tostring(expected), tostring(actual)))
+        error(
+            string.format("%s (expected %s, got %s)", message, tostring(expected), tostring(actual))
+        )
     end
 end
 
 local function applyExploringTickByUserId(playersByUserId, configuredFlatDrainRatePerSecond, dt)
     local nextByUserId = {}
     for userId, oxygen in pairs(playersByUserId) do
-        nextByUserId[userId] = OxygenService.computeNextOxygen(oxygen, configuredFlatDrainRatePerSecond, dt)
+        nextByUserId[userId] =
+            OxygenService.computeNextOxygen(oxygen, configuredFlatDrainRatePerSecond, dt)
     end
     return nextByUserId
 end
@@ -55,21 +58,34 @@ local function run()
         "base state should not trigger fail state"
     )
 
-    local payload = OxygenService.buildUpdatePayload("Oxygen/Update", 0, 100, "Depleted", true, "oxygen_depleted")
+    local payload = OxygenService.buildUpdatePayload(
+        "Oxygen/Update",
+        0,
+        100,
+        "Depleted",
+        true,
+        "oxygen_depleted"
+    )
     assertEqual(payload.failedRun, true, "payload should expose failed run state")
     assertEqual(payload.failReason, "oxygen_depleted", "payload should expose fail reason")
 
     local depletedCalls = 0
-    local service = OxygenService.new({
-        defaultMaxOxygen = 100,
-        baseDrainRatePerSecond = 2,
-        clearCarryOnDepletion = true,
-        forceRespawnOnDepletion = false,
-        depletedFailReason = "oxygen_depleted",
-    }, { OXYGEN_UPDATE = "Oxygen/Update" }, nil, nil, function(_player, reason)
-        depletedCalls += 1
-        assertEqual(reason, "oxygen_depleted", "depleted callback should receive fail reason")
-    end)
+    local service = OxygenService.new(
+        {
+            defaultMaxOxygen = 100,
+            baseDrainRatePerSecond = 2,
+            clearCarryOnDepletion = true,
+            forceRespawnOnDepletion = false,
+            depletedFailReason = "oxygen_depleted",
+        },
+        { OXYGEN_UPDATE = "Oxygen/Update" },
+        nil,
+        nil,
+        function(_player, reason)
+            depletedCalls += 1
+            assertEqual(reason, "oxygen_depleted", "depleted callback should receive fail reason")
+        end
+    )
 
     local fakePlayer = { UserId = 999 }
     service:_handleOxygenDepleted(fakePlayer)
@@ -79,21 +95,33 @@ local function run()
     local resetService = OxygenService.new({
         defaultMaxOxygen = 100,
         baseDrainRatePerSecond = 2,
-    }, { OXYGEN_UPDATE = "Oxygen/Update" }, {FireClient=function() end}, nil)
+    }, { OXYGEN_UPDATE = "Oxygen/Update" }, { FireClient = function() end }, nil)
 
     local fakePlayer2 = { UserId = 777 }
     resetService._playerState[777] = "Depleted"
     resetService._playerFailedRun[777] = true
     resetService._playerFailReason[777] = "oxygen_depleted"
     resetService._playerOxygen[777] = 0
-    
+
     -- Simulate the reset that occurs after teleport delay
     resetService:setPlayerState(fakePlayer2, "Base")
-    
+
     assertEqual(resetService._playerState[777], "Base", "state should return to Base after reset")
-    assertEqual(resetService._playerFailedRun[777], false, "failed run flag should be cleared on Base transition")
-    assertEqual(resetService._playerFailReason[777] == nil, true, "fail reason should be cleared on Base transition")
-    assertEqual(resetService._playerOxygen[777], 100, "oxygen should be refilled on Base transition")
+    assertEqual(
+        resetService._playerFailedRun[777],
+        false,
+        "failed run flag should be cleared on Base transition"
+    )
+    assertEqual(
+        resetService._playerFailReason[777] == nil,
+        true,
+        "fail reason should be cleared on Base transition"
+    )
+    assertEqual(
+        resetService._playerOxygen[777],
+        100,
+        "oxygen should be refilled on Base transition"
+    )
 end
 
 run()

@@ -47,34 +47,20 @@ function InputRouter:start()
 
     local priority = self._config.inputActionPriority or 2000
 
-    ContextActionService:BindActionAtPriority(
-        ACTION_INTERACT,
-        function(_, inputState)
-            if inputState == Enum.UserInputState.Begin then
-                self._interactRequested = true
-            end
-            return Enum.ContextActionResult.Pass
-        end,
-        true,
-        priority,
-        Enum.KeyCode.E,
-        Enum.KeyCode.ButtonX
-    )
+    ContextActionService:BindActionAtPriority(ACTION_INTERACT, function(_, inputState)
+        if inputState == Enum.UserInputState.Begin then
+            self._interactRequested = true
+        end
+        return Enum.ContextActionResult.Pass
+    end, true, priority, Enum.KeyCode.E, Enum.KeyCode.ButtonX)
 
-    ContextActionService:BindActionAtPriority(
-        ACTION_SPRINT,
-        function(_, inputState)
-            self._sprintRequested = inputState == Enum.UserInputState.Begin
-            if inputState == Enum.UserInputState.End then
-                self._sprintRequested = false
-            end
-            return Enum.ContextActionResult.Pass
-        end,
-        false,
-        priority,
-        Enum.KeyCode.LeftShift,
-        Enum.KeyCode.ButtonL3
-    )
+    ContextActionService:BindActionAtPriority(ACTION_SPRINT, function(_, inputState)
+        self._sprintRequested = inputState == Enum.UserInputState.Begin
+        if inputState == Enum.UserInputState.End then
+            self._sprintRequested = false
+        end
+        return Enum.ContextActionResult.Pass
+    end, false, priority, Enum.KeyCode.LeftShift, Enum.KeyCode.ButtonL3)
 end
 
 function InputRouter:destroy()

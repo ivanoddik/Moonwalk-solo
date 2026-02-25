@@ -27,7 +27,7 @@ function OxygenService.new(config, eventNames, updateRemote, baseAnchor, onDeple
     self._connections = {}
     self._diedConnections = {}
     self._tickConnection = nil
-    
+
     self._lastUpdateTime = {}
     return self
 end
@@ -46,7 +46,9 @@ function OxygenService:_getDepletedFailReason()
 end
 
 function OxygenService:start()
-    if self._tickConnection then return end
+    if self._tickConnection then
+        return
+    end
 
     self._connections[#self._connections + 1] = Players.PlayerAdded:Connect(function(player)
         self:_onPlayerAdded(player)
@@ -85,10 +87,10 @@ function OxygenService:setPlayerState(player, state)
     if state ~= "Base" and state ~= "Exploring" and state ~= "Depleted" then
         return
     end
-    
+
     local oldState = self._playerState[player.UserId]
     self._playerState[player.UserId] = state
-    
+
     if state == "Base" then
         self._playerFailedRun[player.UserId] = false
         self._playerFailReason[player.UserId] = nil
@@ -98,7 +100,7 @@ function OxygenService:setPlayerState(player, state)
     if state == "Base" and (oldState == "Exploring" or oldState == "Depleted") then
         self:_refillOxygen(player)
     end
-    
+
     -- Send immediate state change update
     self:_sendUpdate(player)
 end
@@ -119,7 +121,7 @@ function OxygenService:_onPlayerAdded(player)
             self._diedConnections[player.UserId]:Disconnect()
             self._diedConnections[player.UserId] = nil
         end
-        
+
         local humanoid = character:WaitForChild("Humanoid", 5)
         if humanoid then
             self._diedConnections[player.UserId] = humanoid.Died:Connect(function()
@@ -169,37 +171,43 @@ function OxygenService:_onTick(dt)
 
         if root and self._baseAnchor then
             local newState = "Exploring"
-            
+
             -- Cache the bounding box calculation per tick instead of per player
             if not self._cachedAnchorPos and not self._cachedAnchorSize then
                 if self._baseAnchor:IsA("Model") then
-                    self._cachedAnchorPos, self._cachedAnchorSize = self._baseAnchor:GetBoundingBox()
+                    self._cachedAnchorPos, self._cachedAnchorSize =
+                        self._baseAnchor:GetBoundingBox()
                 elseif self._baseAnchor:IsA("BasePart") then
-                    self._cachedAnchorPos, self._cachedAnchorSize = self._baseAnchor.CFrame, self._baseAnchor.Size
+                    self._cachedAnchorPos, self._cachedAnchorSize =
+                        self._baseAnchor.CFrame, self._baseAnchor.Size
                 end
             end
-            
+
             local cf, size = self._cachedAnchorPos, self._cachedAnchorSize
             if cf and size then
                 local localPos = cf:PointToObjectSpace(root.Position)
                 local halfSize = size / 2
-                
+
                 -- Expand the safe zone slightly to account for the character's physical width at the edges
                 local buffer = self._safeZoneBoundaryBuffer
-                
+
                 -- Check if within the X and Z bounds (ignoring Y/height)
-                if math.abs(localPos.X) <= (halfSize.X + buffer) and math.abs(localPos.Z) <= (halfSize.Z + buffer) then
-                   newState = "Base"
+                if
+                    math.abs(localPos.X) <= (halfSize.X + buffer)
+                    and math.abs(localPos.Z) <= (halfSize.Z + buffer)
+                then
+                    newState = "Base"
                 end
             elseif self._baseAnchor:IsA("BasePart") or self._baseAnchor:IsA("Model") then
                 -- Fallback to simple radius if CFrame isn't readily available
-                local pos = self._baseAnchor:IsA("Model") and self._baseAnchor:GetPivot().Position or self._baseAnchor.Position
+                local pos = self._baseAnchor:IsA("Model") and self._baseAnchor:GetPivot().Position
+                    or self._baseAnchor.Position
                 local dist = (root.Position - pos).Magnitude
                 if dist <= self._config.safeZoneRadius then
                     newState = "Base"
                 end
             end
-            
+
             if self._playerState[userId] ~= newState then
                 -- Do not overwrite Depleted with Exploring. (Once depleted, you must return to Base to clear it)
                 if self._playerState[userId] == "Depleted" and newState == "Exploring" then
@@ -226,7 +234,9 @@ function OxygenService:_onTick(dt)
         end
 
         local player = Players:GetPlayerByUserId(userId)
-        if not player then continue end
+        if not player then
+            continue
+        end
 
         local currentOx = self._playerOxygen[userId] or self._config.defaultMaxOxygen
 
@@ -237,12 +247,8 @@ function OxygenService:_onTick(dt)
                 dt
             )
             local alreadyFailed = self._playerFailedRun[userId] == true
-            local shouldFail = OxygenService.shouldTriggerFailState(
-                state,
-                currentOx,
-                nextOx,
-                alreadyFailed
-            )
+            local shouldFail =
+                OxygenService.shouldTriggerFailState(state, currentOx, nextOx, alreadyFailed)
             self._playerOxygen[userId] = nextOx
 
             if shouldFail then
@@ -307,11 +313,13 @@ function OxygenService.buildUpdatePayload(eventName, current, max, state, failed
 end
 
 function OxygenService:_sendUpdate(player)
-    if not self._updateRemote then return end
-    
+    if not self._updateRemote then
+        return
+    end
+
     local ox = self._playerOxygen[player.UserId] or self._config.defaultMaxOxygen
     local maxOx = self._config.defaultMaxOxygen
-    
+
     self._updateRemote:FireClient(
         player,
         OxygenService.buildUpdatePayload(

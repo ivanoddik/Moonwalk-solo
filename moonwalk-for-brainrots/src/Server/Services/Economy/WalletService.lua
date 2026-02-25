@@ -11,7 +11,14 @@ function WalletService:addCurrency(player, amount)
     local userId = player.UserId
     self._wallets[userId] = (self._wallets[userId] or 0) + amount
     -- Fire a remote here later to update UI, but keep it simple for now
-    print(string.format("[WalletService] Player %s earned %d. Total: %d", player.Name, amount, self._wallets[userId]))
+    print(
+        string.format(
+            "[WalletService] Player %s earned %d. Total: %d",
+            player.Name,
+            amount,
+            self._wallets[userId]
+        )
+    )
     return self._wallets[userId]
 end
 

@@ -1,5 +1,6 @@
 local Players = game:GetService("Players")
-local TweenService = game:GetService("TweenService")local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local TweenService = game:GetService("TweenService")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local sharedRoot = ReplicatedStorage:WaitForChild("Shared")
 local OxygenConfig = require(sharedRoot.Config.Oxygen)
 
@@ -13,11 +14,11 @@ function OxygenController.new(updateRemote, expectedEventName)
     self._connection = nil
     self._gui = nil
     self._label = nil
-    
+
     self._warningTween = nil
     self._warningSound = nil
     self._isWarningActive = false
-    
+
     return self
 end
 
@@ -57,10 +58,10 @@ function OxygenController:_ensureGui()
     end
 
     local playerGui = Players.LocalPlayer:WaitForChild("PlayerGui")
-    
+
     -- Attempt to find pre-existing GUI
     local gui = playerGui:FindFirstChild("OxygenGui")
-    
+
     -- Fallback to runtime creation if missing from StarterGui
     if not gui then
         gui = Instance.new("ScreenGui")
@@ -84,7 +85,7 @@ function OxygenController:_ensureGui()
         label.Text = "Oxygen: 100/100"
         label.Parent = gui
     end
-    
+
     local sound = gui:FindFirstChild("LowOxygenWarning")
     if not sound then
         sound = Instance.new("Sound")
@@ -98,17 +99,17 @@ function OxygenController:_ensureGui()
     self._gui = gui
     self._label = label
     self._warningSound = sound
-    
+
     -- Create the pulsing tween (color fades back and forth)
     local tweenInfo = TweenInfo.new(
-        OxygenConfig.warningTweenDuration, 
-        Enum.EasingStyle.Sine, 
-        Enum.EasingDirection.InOut, 
+        OxygenConfig.warningTweenDuration,
+        Enum.EasingStyle.Sine,
+        Enum.EasingDirection.InOut,
         -1, -- Infinite repeat
         true -- Reverses
     )
     self._warningTween = TweenService:Create(self._label, tweenInfo, {
-        TextColor3 = OxygenConfig.warningTextColor
+        TextColor3 = OxygenConfig.warningTextColor,
     })
 end
 
@@ -117,7 +118,7 @@ function OxygenController:_setWarningActive(active)
         return
     end
     self._isWarningActive = active
-    
+
     if active then
         if self._warningTween then
             self._warningTween:Play()
@@ -152,12 +153,12 @@ function OxygenController:_onUpdate(payload)
     local failReason = payload.failReason
     local threshold = payload.threshold or OxygenConfig.lowOxygenWarningThreshold
 
-    self._label.Text = string.format("[%s] Oxygen: %d/%d", string.upper(state), math.floor(current), max)
+    self._label.Text =
+        string.format("[%s] Oxygen: %d/%d", string.upper(state), math.floor(current), max)
 
-    
     local shouldWarn = not failedRun and state ~= "Base" and current <= threshold
     self:_setWarningActive(shouldWarn)
-    
+
     if failedRun then
         self._label.TextColor3 = OxygenConfig.failedTextColor
     elseif state == "Base" then

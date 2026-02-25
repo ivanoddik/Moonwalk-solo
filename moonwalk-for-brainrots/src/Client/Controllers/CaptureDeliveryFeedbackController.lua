@@ -22,7 +22,7 @@ function CaptureDeliveryFeedbackController:start()
     self._connection = self._feedbackRemote.OnClientEvent:Connect(function(payload)
         self:_onFeedback(payload)
     end)
-    
+
     self._charConnection = Players.LocalPlayer.CharacterAdded:Connect(function()
         if self._label then
             self._label.Text = "Capture/Delivery feedback ready"

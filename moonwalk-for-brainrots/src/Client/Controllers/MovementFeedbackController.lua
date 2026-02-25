@@ -23,9 +23,11 @@ function MovementFeedbackController:start()
         return
     end
 
-    self._stateConnection = self._movementController:getStateChangedSignal():Connect(function(newState)
-        self:_applyState(newState)
-    end)
+    self._stateConnection = self._movementController
+        :getStateChangedSignal()
+        :Connect(function(newState)
+            self:_applyState(newState)
+        end)
 
     self:_applyState(self._movementController:getState())
 end

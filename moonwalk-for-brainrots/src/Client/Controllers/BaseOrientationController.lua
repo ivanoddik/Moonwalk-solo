@@ -63,7 +63,8 @@ function BaseOrientationController:_ensureGui()
     local label = Instance.new("TextLabel")
     label.Name = self._config.hudLabelName
     label.AnchorPoint = Vector2.new(0.5, 0)
-    label.Position = UDim2.new(0.5, self._config.hudOffset.X.Offset, 0, self._config.hudOffset.Y.Offset)
+    label.Position =
+        UDim2.new(0.5, self._config.hudOffset.X.Offset, 0, self._config.hudOffset.Y.Offset)
     label.Size = UDim2.fromOffset(360, 32)
     label.BackgroundTransparency = 0.35
     label.BackgroundColor3 = Color3.fromRGB(15, 15, 20)

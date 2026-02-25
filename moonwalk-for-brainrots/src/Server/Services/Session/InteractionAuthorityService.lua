@@ -1,7 +1,12 @@
 local InteractionAuthorityService = {}
 InteractionAuthorityService.__index = InteractionAuthorityService
 
-function InteractionAuthorityService.new(actionRemote, actionContracts, captureDeliveryService, config)
+function InteractionAuthorityService.new(
+    actionRemote,
+    actionContracts,
+    captureDeliveryService,
+    config
+)
     local self = setmetatable({}, InteractionAuthorityService)
     self._actionRemote = actionRemote
     self._actionContracts = actionContracts
@@ -21,10 +26,11 @@ function InteractionAuthorityService:start()
     self._connection = self._actionRemote.OnServerEvent:Connect(function(player, payload)
         self:_onActionIntent(player, payload)
     end)
-    
-    self._playerRemovingConnection = game:GetService("Players").PlayerRemoving:Connect(function(player)
-        self._lastInteraction[player.UserId] = nil
-    end)
+
+    self._playerRemovingConnection = game:GetService("Players").PlayerRemoving
+        :Connect(function(player)
+            self._lastInteraction[player.UserId] = nil
+        end)
 end
 
 function InteractionAuthorityService:stop()
@@ -53,7 +59,7 @@ function InteractionAuthorityService:_onActionIntent(player, payload)
         local now = os.clock()
         local lastTime = self._lastInteraction[player.UserId] or 0
         local debounceTime = self._config and self._config.interactionDebounceTime or 0.5
-        
+
         if now - lastTime < debounceTime then
             return -- Ignore spam requests
         end

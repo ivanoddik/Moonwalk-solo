@@ -10,7 +10,7 @@ local OxygenConfig = {
     depletedFailReason = "oxygen_depleted",
     respawnDelaySeconds = 1.5,
     lowOxygenWarningThreshold = 20,
-    
+
     -- Visual and Audio Warning Config
     warningSoundId = "rbxassetid://876939830",
     warningSoundVolume = 0.5,

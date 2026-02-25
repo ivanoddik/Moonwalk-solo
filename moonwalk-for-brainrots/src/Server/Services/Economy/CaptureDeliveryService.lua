@@ -3,7 +3,14 @@ local CollectionService = game:GetService("CollectionService")
 local CaptureDeliveryService = {}
 CaptureDeliveryService.__index = CaptureDeliveryService
 
-function CaptureDeliveryService.new(config, eventNames, feedbackRemote, carryStateService, walletService, economyService)
+function CaptureDeliveryService.new(
+    config,
+    eventNames,
+    feedbackRemote,
+    carryStateService,
+    walletService,
+    economyService
+)
     local self = setmetatable({}, CaptureDeliveryService)
     self._config = config
     self._eventNames = eventNames
@@ -29,7 +36,11 @@ function CaptureDeliveryService:_tryCapture(player)
         return self:_result("reject", "MISSING_ROOT")
     end
 
-    local target = self:_findClosestTaggedTarget(root.Position, self._config.tags.captureTarget, self._config.captureRange)
+    local target = self:_findClosestTaggedTarget(
+        root.Position,
+        self._config.tags.captureTarget,
+        self._config.captureRange
+    )
     if not target then
         self:_emitFeedback(player, "capture_failed", nil, "NO_CAPTURE_TARGET")
         return self:_result("reject", "NO_CAPTURE_TARGET")
@@ -38,8 +49,10 @@ function CaptureDeliveryService:_tryCapture(player)
     local payload = {
         brainrotId = target:GetAttribute("BrainrotId") or self._config.defaults.brainrotId,
         baseValue = target:GetAttribute("BaseValue") or self._config.defaults.baseValue,
-        rarityMultiplier = target:GetAttribute("RarityMultiplier") or self._config.defaults.rarityMultiplier,
-        mutationMultiplier = target:GetAttribute("MutationMultiplier") or self._config.defaults.mutationMultiplier,
+        rarityMultiplier = target:GetAttribute("RarityMultiplier")
+            or self._config.defaults.rarityMultiplier,
+        mutationMultiplier = target:GetAttribute("MutationMultiplier")
+            or self._config.defaults.mutationMultiplier,
         capturedAt = os.time(),
     }
 
@@ -72,7 +85,8 @@ function CaptureDeliveryService:_tryDeliver(player)
         return self:_result("reject", "NOT_CARRYING")
     end
 
-    local payoutPreview = self._economyService and self._economyService:calculateCanonicalPayout(player, carried)
+    local payoutPreview = self._economyService
+            and self._economyService:calculateCanonicalPayout(player, carried)
         or math.floor(carried.baseValue * carried.rarityMultiplier * carried.mutationMultiplier)
     local deliveredPayload = {
         brainrotId = carried.brainrotId,
@@ -120,7 +134,7 @@ function CaptureDeliveryService:_emitFeedback(player, action, data, reason)
         eventName = self._eventNames.CAPTURE_DELIVERY_FEEDBACK,
         action = action,
         data = data,
-        reason = reason
+        reason = reason,
     })
 end
 
