@@ -1,0 +1,117 @@
+# generated: 2026-02-25
+# project: Moonwalk for brainrots
+# project_key: NOKEY
+# tracking_system: file-system
+# story_location: {project-root}/_bmad-output/implementation-artifacts
+
+# STATUS DEFINITIONS:
+# ==================
+# Epic Status:
+#   - backlog: Epic not yet started
+#   - in-progress: Epic actively being worked on
+#   - done: All stories in epic completed
+#
+# Epic Status Transitions:
+#   - backlog → in-progress: Automatically when first story is created (via create-story)
+#   - in-progress → done: Manually when all stories reach 'done' status
+#
+# Story Status:
+#   - backlog: Story only exists in epic file
+#   - ready-for-dev: Story file created in stories folder
+#   - in-progress: Developer actively working on implementation
+#   - review: Ready for code review (via Dev's code-review workflow)
+#   - done: Story completed
+#
+# Retrospective Status:
+#   - optional: Can be completed but not required
+#   - done: Retrospective has been completed
+#
+# WORKFLOW NOTES:
+# ===============
+# - Epic transitions to 'in-progress' automatically when first story is created
+# - Stories can be worked in parallel if team capacity allows
+# - SM typically creates next story after previous one is 'done' to incorporate learnings
+# - Dev moves story to 'review', then runs code-review (fresh context, different LLM recommended)
+
+generated: 2026-02-25
+project: Moonwalk for brainrots
+project_key: NOKEY
+tracking_system: file-system
+story_location: {project-root}/_bmad-output/implementation-artifacts
+
+development_status:
+  epic-1: done
+  1-1-move-smoothly-with-touch-kbm-gamepad: done
+  1-2-read-where-the-base-is: done
+  1-3-camera-motion-helps-navigate: done
+  1-4-movement-responsiveness-remains-stable: done
+  1-5-receive-clear-movement-feedback: done
+  epic-1-retrospective: optional
+  
+  epic-2: done
+  2-1-capture-a-brainrot: done
+  2-2-carry-captured-brainrots: done
+  2-3-deliver-captured-brainrots: done
+  2-4-immediate-payout-feedback: done
+  2-5-robust-state: done
+  epic-2-retrospective: optional
+  
+  epic-3: in-progress
+  3-1-oxygen-drains-during-expeditions: done
+  3-2-deeper-routes-increase-oxygen-pressure: backlog
+  3-3-oxygen-depletion-causes-fail-state: backlog
+  3-4-respawn-quickly-at-base: backlog
+  3-5-oxygen-urgency-feedback-is-clear: backlog
+  epic-3-retrospective: optional
+  
+  epic-4: backlog
+  4-1-payout-reflects-captured-rarity-mutation: backlog
+  4-2-placed-brainrots-generate-passive-income: backlog
+  4-3-read-current-income-state-clearly: backlog
+  4-4-base-income-remains-stable: backlog
+  epic-4-retrospective: optional
+  
+  epic-5: backlog
+  5-1-buy-upgrades-that-improve-run-capability: backlog
+  5-2-costs-scale-predictably-and-feel-fair: backlog
+  5-3-completed-run-contributes-upgrade-progress: backlog
+  5-4-anti-stall-logic-prevents-dead-progression: backlog
+  5-5-progression-feels-meaningful-within-first-minute: backlog
+  epic-5-retrospective: optional
+  
+  epic-6: backlog
+  6-1-see-rebirth-requirement-progress-clearly: backlog
+  6-2-rebirth-resets-run-state-resources: backlog
+  6-3-rebirth-grants-permanent-boosts: backlog
+  6-4-base-capacity-increases-with-rebirth: backlog
+  6-5-rebirth-transitions-preserve-persistence: backlog
+  epic-6-retrospective: optional
+  
+  epic-8A: backlog
+  8A-1-deeper-zones-feel-more-rewarding: backlog
+  8A-2-rarity-mutation-outcomes-scale-with-risk: backlog
+  8A-3-unlock-pacing-keeps-progress-constant: backlog
+  8A-4-content-depth-supports-retention-testing: backlog
+  epic-8A-retrospective: optional
+  
+  epic-7A: backlog
+  7A-1-open-and-browse-robux-store: backlog
+  7A-2-purchases-are-granted-and-persisted: backlog
+  7A-3-owned-products-restore-on-reconnect: backlog
+  7A-4-entitlement-checks-are-resilient: backlog
+  epic-7A-retrospective: optional
+  
+  epic-7B: backlog
+  7B-1-buy-and-use-collect-all: backlog
+  7B-2-activate-2x-revenue-with-clear-effect: backlog
+  7B-3-activate-2x-oxygen-with-predictable-impact: backlog
+  7B-4-monetization-never-hard-blocks-free-progression: backlog
+  7B-5-offer-tuning-preserves-risk-reward: backlog
+  epic-7B-retrospective: optional
+  
+  epic-8B: backlog
+  8B-1-gameplay-remains-stable-on-low-end-mobile: backlog
+  8B-2-state-remains-consistent-in-multiplayer: backlog
+  8B-3-cloud-saves-and-leaderboard-remain-durable: backlog
+  8B-4-crash-rate-and-rejoin-meet-launch-gates: backlog
+  epic-8B-retrospective: optional

@@ -1,0 +1,14 @@
+# Wally
+Packages
+packages/_Index
+
+# Rojo / Roblox
+*.rbxl
+*.rbxlx
+*.rbxm
+*.rbxmx
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
